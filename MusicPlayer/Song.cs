@@ -12,5 +12,13 @@ namespace MusicPlayer
         public string Name;
         public Artist Artist;
         public Album Album;
+
+        public Song()
+        {
+            Duration = 0;
+            Name = "Unnamed";
+            Artist = new Artist();
+            Album = new Album();
+        }
     }
 }

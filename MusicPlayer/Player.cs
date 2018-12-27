@@ -70,7 +70,6 @@ namespace MusicPlayer
             if (adddendSong.Length==0)
             {
                 Console.WriteLine("Песен нет");
-                return;
             }
             else
                 Songs = adddendSong;

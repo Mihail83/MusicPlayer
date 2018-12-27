@@ -62,5 +62,19 @@ namespace MusicPlayer
         {
             Console.WriteLine("Player has stopped");
         }
+
+        //B5-Player8/10
+        /// /// /// /// /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
+        public void Add(params Song[] adddendSong )
+        {
+            if (adddendSong.Length==0)
+            {
+                Console.WriteLine("Песен нет");
+                return;
+            }
+            else
+                Songs = adddendSong;
+        }
+
     }
 }

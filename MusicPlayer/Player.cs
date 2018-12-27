@@ -8,6 +8,9 @@ namespace MusicPlayer
 {
     public class Player
     {
+        private bool _locked;
+        private bool _play;
+
         const int MIN_VOLUME = 0;
         const int MAX_VOLUME = 100;
 
@@ -36,31 +39,74 @@ namespace MusicPlayer
             }
         }
 
+        public bool Playing
+        {
+            get
+            {
+                return _play;
+            }
+        }
+
         public Song[] Songs;
 
         public void VolumeUp()
         {
-            Volume++;
+            if (_locked) return;
+            else
+            {
+                Volume++;
+                Console.WriteLine("sound has been increased");
+            }         
         }
 
         public void VolumeDown()
         {
-            Volume--;
+            if (_locked) return;
+            else
+            {
+                Volume--;
+                Console.WriteLine("sound has been reduced");
+                
+            }           
         }
 
         public void VolumeChange( int step)
         {
-            Volume += step;
+            if (_locked) return;
+            else
+            {
+
+                Volume += step;
+                if (step > 0)
+                {
+                    Console.WriteLine("sound has been increased");
+                }
+                else
+                {
+                    Console.WriteLine("sound has been reduced");
+                }                
+            }            
         }
 
         public void Play()
         {
-            Console.WriteLine($"Player is playing: {Songs[0].Name}");
+            if (_locked) return;
+            else
+            {
+                Console.WriteLine($"Player is playing: {Songs[0].Name}");
+                _play = true;
+            }
+           
         }
 
         public void Stop()
         {
-            Console.WriteLine("Player has stopped");
+            if (_locked) return;
+            else
+            {
+                Console.WriteLine("Player has stopped");
+                _play = false;
+            }
         }
 
         //B5-Player8/10
@@ -73,6 +119,20 @@ namespace MusicPlayer
             }
             else
                 Songs = adddendSong;
+        }
+
+        public void LockButton()
+        {
+            if (_locked)
+            {
+                _locked = false;
+                Console.WriteLine("Плеер разблокирован");
+            }
+            else
+            {
+                _locked = true;
+                Console.WriteLine("Плеер заблокирован");
+            }
         }
 
     }

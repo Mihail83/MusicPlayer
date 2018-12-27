@@ -15,59 +15,60 @@ namespace MusicPlayer
 
             var player = new Player();
             //          player.Volume = 20;
-            //player.Songs = GetSongsData();           
+            //player.Songs = CreateSongMassive(ref theShortestSong, ref theLongestSong); 
 
+            /*            
+         //B5-Player7/10
+         /// /// /// /// /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
+         //Console.WriteLine($" самая  короткая {theShortestSong}  самая длинная {theLongestSong}");
 
+         var testSongsMassive = CreateSongMassive(ref theShortestSong, ref theLongestSong);
+         var testSong1 = CreateSong("Lya-lya-lya ", 115);
+         var testSong2 = CreateSong("Bla-Bla-Bla ", 203);
 
+         Console.WriteLine($" самая  короткая {theShortestSong}  самая длинная {theLongestSong}");
 
-            //B5-Player7/10
-            /// /// /// /// /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
-            Console.WriteLine($" самая  короткая {theShortestSong}  самая длинная {theLongestSong}");
+         //B5-Player8/10
+         player.Add(testSong1);
+         player.Add(testSong1, testSong2);
+         player.Add(testSongsMassive);
 
-            var testSongsMassive = CreateSongMassive(ref theShortestSong, ref theLongestSong);
-            var testSong1 = CreateSong("Lya-lya-lya ", 115);
-            var testSong2 = CreateSong("Bla-Bla-Bla ", 203);
+         Console.WriteLine($"общая длительность песен {SummaryDuration(player.Songs)}");
+         Console.WriteLine($" самая  короткая {theShortestSong}  самая длинная {theLongestSong}");
 
-            Console.WriteLine($" самая  короткая {theShortestSong}  самая длинная {theLongestSong}");
+         //    B5-Player10/10 defaultAndNamedParametrs    /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
+         var testArtist = AddArtist();
+         Console.WriteLine(testArtist.Name);
 
-            //B5-Player8/10
-            player.Add(testSong1);
-            player.Add(testSong1, testSong2);
-            player.Add(testSongsMassive);
+         var testAlbum = AddAlbum();
+         Console.WriteLine($"{testAlbum.Name}   {testAlbum.Year}");
 
+         var testAlbum1 = AddAlbum(year:2010, alb_name:"GOLD");
+         Console.WriteLine($"{testAlbum1.Name}   {testAlbum1.Year}");
 
-            Console.WriteLine($"общая длительность песен {SummaryDuration(player.Songs)}");
-            Console.WriteLine($" самая  короткая {theShortestSong}  самая длинная {theLongestSong}");
+         var testAlbum2 = AddAlbum("best", 1995);
+         Console.WriteLine($"{testAlbum2.Name}   {testAlbum2.Year}");
 
-            //    B5-Player10/10 defaultAndNamedParametrs    /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
-            var testArtist = AddArtist();
-            Console.WriteLine(testArtist.Name);
+        TraceInfo(player);
+    */
 
-            var testAlbum = AddAlbum();
-            Console.WriteLine($"{testAlbum.Name}   {testAlbum.Year}");
-            
-            var testAlbum1 = AddAlbum(year:2010, alb_name:"GOLD");
-            Console.WriteLine($"{testAlbum1.Name}   {testAlbum1.Year}");
+             player.Songs = CreateSongMassive(ref theShortestSong, ref theLongestSong);
+           player.LockButton();
+             player.Play();
+             player.VolumeUp();
+             Console.WriteLine(player.Volume);
+            player.LockButton();
+             player.VolumeChange(150);
+             Console.WriteLine(player.Volume);
 
-            var testAlbum2 = AddAlbum("best", 1995);
-            Console.WriteLine($"{testAlbum2.Name}   {testAlbum2.Year}");
+             player.VolumeChange(-125);
+             Console.WriteLine(player.Volume);
 
+             player.Stop();
 
-            /*TraceInfo(player);
+             Console.ReadLine();
 
-            player.Play();
-            player.VolumeUp();
-            Console.WriteLine(player.Volume);
-
-            player.VolumeChange(-300);
-            Console.WriteLine(player.Volume);
-
-            player.VolumeChange(300);
-            Console.WriteLine(player.Volume);
-                        
-            player.Stop();*/
-
-            Console.ReadLine();
+            // player._play = false;
         }
 
         public static Song[] GetSongsData()

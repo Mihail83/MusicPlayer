@@ -51,29 +51,25 @@ namespace MusicPlayer
 
         public void VolumeUp()
         {
-            if (_locked) return;
-            else
+            if (!_locked)
             {
                 Volume++;
                 Console.WriteLine("sound has been increased");
-            }         
+            }           
         }
 
         public void VolumeDown()
         {
-            if (_locked) return;
-            else
+            if (!_locked)
             {
                 Volume--;
                 Console.WriteLine("sound has been reduced");
-                
-            }           
+            }             
         }
 
         public void VolumeChange( int step)
         {
-            if (_locked) return;
-            else
+            if (!_locked)
             {
 
                 Volume += step;
@@ -84,8 +80,8 @@ namespace MusicPlayer
                 else
                 {
                     Console.WriteLine("sound has been reduced");
-                }                
-            }            
+                }
+            }                  
         }
 
         public void Play()
@@ -101,12 +97,11 @@ namespace MusicPlayer
 
         public void Stop()
         {
-            if (_locked) return;
-            else
+            if (!_locked)
             {
                 Console.WriteLine("Player has stopped");
                 _play = false;
-            }
+            }            
         }
 
         //B5-Player8/10

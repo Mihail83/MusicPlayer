@@ -8,14 +8,13 @@ namespace MusicPlayer
 {
     public class Player
     {
-        private int _volume;
-        private int songsCounter;
-        private Dictionary<int, Song> Songs;
+        private bool _locked;
+        private bool _play;
 
         const int MIN_VOLUME = 0;
         const int MAX_VOLUME = 100;
 
-        
+        private int _volume;
         public int Volume
         {
             get
@@ -38,48 +37,96 @@ namespace MusicPlayer
                     _volume = value;
                 }
             }
-        }        
-
-        public Player()
-        {
-            songsCounter = 0;
         }
-            
+
+        public bool Playing
+        {
+            get
+            {
+                return _play;
+            }
+        }
+
+        public Song[] Songs;
 
         public void VolumeUp()
         {
-            Volume++;
+            if (!_locked)
+            {
+                Volume++;
+                Console.WriteLine("sound has been increased");
+            }           
         }
 
         public void VolumeDown()
         {
-            Volume--;
+            if (!_locked)
+            {
+                Volume--;
+                Console.WriteLine("sound has been reduced");
+            }             
         }
 
         public void VolumeChange( int step)
         {
-            Volume += step;
+            if (!_locked)
+            {
+
+                Volume += step;
+                if (step > 0)
+                {
+                    Console.WriteLine("sound has been increased");
+                }
+                else
+                {
+                    Console.WriteLine("sound has been reduced");
+                }
+            }                  
         }
 
         public void Play()
         {
-            Console.WriteLine($"Player is playing: {Songs[0].Name}");
+            if (_locked) return;
+            else
+            {
+                Console.WriteLine($"Player is playing: {Songs[0].Name}");
+                _play = true;
+            }
+           
         }
 
         public void Stop()
         {
-            Console.WriteLine("Player has stopped");
+            if (!_locked)
+            {
+                Console.WriteLine("Player has stopped");
+                _play = false;
+            }            
         }
-                
-        public void Add( Song adddendSong )
+
+        //B5-Player8/10
+        /// /// /// /// /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
+        public void Add(params Song[] adddendSong )
         {
-            if (adddendSong == null)
+            if (adddendSong.Length==0)
             {
                 Console.WriteLine("Песен нет");
             }
             else
+                Songs = adddendSong;
+        }
+
+        public void LockButton()
+        {
+            if (_locked)
             {
-                Songs.Add(songsCounter++, adddendSong);
+                _locked = false;
+                Console.WriteLine("Плеер разблокирован");
+            }
+            else
+            {
+                _locked = true;
+                Console.WriteLine("Плеер заблокирован");
             }
         }
 

@@ -8,10 +8,14 @@ namespace MusicPlayer
 {
     public class Player
     {
+        private int _volume;
+        private int songsCounter;
+        private Dictionary<int, Song> Songs;
+
         const int MIN_VOLUME = 0;
         const int MAX_VOLUME = 100;
 
-        private int _volume;
+        
         public int Volume
         {
             get
@@ -34,9 +38,13 @@ namespace MusicPlayer
                     _volume = value;
                 }
             }
-        }
+        }        
 
-        public Song[] Songs;
+        public Player()
+        {
+            songsCounter = 0;
+        }
+            
 
         public void VolumeUp()
         {
@@ -62,17 +70,17 @@ namespace MusicPlayer
         {
             Console.WriteLine("Player has stopped");
         }
-
-        //B5-Player8/10
-        /// /// /// /// /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
-        public void Add(params Song[] adddendSong )
+                
+        public void Add( Song adddendSong )
         {
-            if (adddendSong.Length==0)
+            if (adddendSong == null)
             {
                 Console.WriteLine("Песен нет");
             }
             else
-                Songs = adddendSong;
+            {
+                Songs.Add(songsCounter++, adddendSong);
+            }
         }
 
     }

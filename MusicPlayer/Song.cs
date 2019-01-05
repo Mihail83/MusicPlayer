@@ -10,13 +10,16 @@ namespace MusicPlayer
     {
         public int Duration;
         public string Name;
+        public string Lyrics;
         public Artist Artist;
         public Album Album;
+        
 
         public Song()
         {
-            Duration = 0;
+            Duration = 1;
             Name = "Unnamed";
+            Lyrics = "LaiLai";
             Artist = new Artist();
             Album = new Album();
         }

@@ -17,5 +17,10 @@ namespace MusicPlayer
             this.Name = "NoName";
             this.Year = DateTime.Now.Year;            
         }
+
+        public override string ToString()
+        {
+            return this.Name;
+        }
     }
 }

@@ -10,6 +10,12 @@ namespace MusicPlayer
     {
         private bool _locked;
         private bool _play;
+        // сменить на private
+        private int counter;
+        private List<Song> _songs;
+        private bool loop;
+
+        Random rnd = new Random();
 
         const int MIN_VOLUME = 0;
         const int MAX_VOLUME = 100;
@@ -39,6 +45,12 @@ namespace MusicPlayer
             }
         }
 
+        public Player()
+        {
+            counter = 0;
+            _songs = new List<Song>();
+        }
+
         public bool Playing
         {
             get
@@ -46,8 +58,6 @@ namespace MusicPlayer
                 return _play;
             }
         }
-
-        public Song[] Songs;
 
         public void VolumeUp()
         {
@@ -84,15 +94,23 @@ namespace MusicPlayer
             }                  
         }
 
-        public void Play()
+        public void Play(bool loop = false)
         {
+            int loopNumber = loop ? 5 : 1;
             if (_locked) return;
             else
-            {
-                Console.WriteLine($"Player is playing: {Songs[0].Name}");
+            {                
                 _play = true;
-            }
-           
+
+                for (int i = 0; i < loopNumber; i++)
+                {
+                    foreach (var item in _songs)
+                    {
+                        Console.WriteLine($"Player is playing:   {item} ");
+                        System.Threading.Thread.Sleep(500);
+                    }
+                }               
+            }           
         }
 
         public void Stop()
@@ -103,17 +121,46 @@ namespace MusicPlayer
                 _play = false;
             }            
         }
-
-        //B5-Player8/10
-        /// /// /// /// /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
-        public void Add(params Song[] adddendSong )
+        
+        public void Add(Song adddendSong )
         {
-            if (adddendSong.Length==0)
+            if (adddendSong == null)
             {
                 Console.WriteLine("Песен нет");
             }
             else
-                Songs = adddendSong;
+            {
+                _songs.Add(adddendSong);
+            }               
+        }
+
+        public void Add(List<Song> adddendSong)
+        {
+            if (adddendSong == null)
+            {
+                Console.WriteLine("Песен нет");
+            }
+            else
+            {
+                _songs.AddRange(adddendSong);                               
+            }
+        }
+       
+        public void Add(IEnumerable<Song> adddendSong)
+        {
+            if (adddendSong == null)
+            {
+                Console.WriteLine("Песен нет");
+            }
+            else
+            {
+                _songs.AddRange(adddendSong);
+            }
+        }
+
+        public void Remove(int RemoveIndex)
+        {
+            _songs.RemoveAt(RemoveIndex);        
         }
 
         public void LockButton()
@@ -130,5 +177,46 @@ namespace MusicPlayer
             }
         }
 
+        public void Shuffle()
+        {
+            int index = 0;
+            var shuffledSongs = new List<Song>();
+            while (0 < _songs.Count)
+            {
+                index = rnd.Next(0, _songs.Count);
+                shuffledSongs.Add(_songs[index]);
+                _songs.RemoveAt(index);
+            }                
+           _songs.AddRange(shuffledSongs);            
+        }
+
+        public void SortByTitle()
+        {
+            var listForSort = new List<Song>();
+            var nameList = new List<string>();
+            foreach (var item in _songs)
+            {
+                nameList.Add(item.Name);
+            }
+            nameList.Sort();
+            for (; 0 < nameList.Count;)
+            {
+                foreach (var item in _songs)
+                {
+                    if (nameList[0].Equals(item.Name))
+                    {
+                        listForSort.Add(item);
+                        nameList.RemoveAt(0);
+                        break;
+                    }
+                }
+            }
+            _songs.Clear();
+            _songs.AddRange(listForSort);
+        }
+        public void LazyAndRightSort()  //  :-)
+        {
+            _songs.Sort();
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MusicPlayer
 {
-    public class Artist
+    public class Artist : IComparable<Artist>
     {
         public string Genre;
         public string Name;
@@ -27,6 +27,15 @@ namespace MusicPlayer
         {
             this.Name = name;
             this.Genre = genre;
+        }
+
+        public override string ToString()
+        {
+            return this.Name;
+        }
+        public int CompareTo(Artist other)
+        {            
+            return Name.CompareTo(other.Name);
         }
     }
 }

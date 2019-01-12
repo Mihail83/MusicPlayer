@@ -14,61 +14,57 @@ namespace MusicPlayer
             int theLongestSong = 0;
 
             var player = new Player();
-            //          player.Volume = 20;
-            //player.Songs = CreateSongMassive(ref theShortestSong, ref theLongestSong); 
+            var playlist = new Playlist();
 
-            /*            
-         //B5-Player7/10
-         /// /// /// /// /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
-         //Console.WriteLine($" самая  короткая {theShortestSong}  самая длинная {theLongestSong}");
+            var song = CreateSong("first", 10);
+            var song1 = CreateSong("Second", 15);
+            var song2 = CreateSong("third", 20);
+            playlist.Add(song);
+            playlist.Add(song1);
+            playlist.Add(song2);
+            playlist.Add(song);
+            playlist.Add(song1);
+            playlist.Add(song2);
 
-         var testSongsMassive = CreateSongMassive(ref theShortestSong, ref theLongestSong);
-         var testSong1 = CreateSong("Lya-lya-lya ", 115);
-         var testSong2 = CreateSong("Bla-Bla-Bla ", 203);
+            Console.WriteLine(playlist.Count());
+            playlist.Insert(2, song2);
+           //playlist.Clear();
+            playlist.Insert(0, song2);
+            playlist.Insert(8, song2);
 
-         Console.WriteLine($" самая  короткая {theShortestSong}  самая длинная {theLongestSong}");
+            Console.WriteLine(Convert.ToString(playlist.Contains(song2)));
+            Console.WriteLine(playlist.IndexOf(song1));
+            
+            player.Add(playlist);
 
-         //B5-Player8/10
-         player.Add(testSong1);
-         player.Add(testSong1, testSong2);
-         player.Add(testSongsMassive);
+            
 
-         Console.WriteLine($"общая длительность песен {SummaryDuration(player.Songs)}");
-         Console.WriteLine($" самая  короткая {theShortestSong}  самая длинная {theLongestSong}");
+            //Console.WriteLine("Play    Shuffle    SortByTitle");
+            player.Play();
+           // player.Shuffle();               
+            //player.Play();
+            //Console.ReadLine();
 
-         //    B5-Player10/10 defaultAndNamedParametrs    /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
-         var testArtist = AddArtist();
-         Console.WriteLine(testArtist.Name);
+            //Console.WriteLine("SortByTitle   Play    ");
+                       
+            //player.SortByTitle();
+            //player.Play();
+            //Console.ReadLine();
 
-         var testAlbum = AddAlbum();
-         Console.WriteLine($"{testAlbum.Name}   {testAlbum.Year}");
+            //Console.WriteLine("Shuffle   Play    ");
 
-         var testAlbum1 = AddAlbum(year:2010, alb_name:"GOLD");
-         Console.WriteLine($"{testAlbum1.Name}   {testAlbum1.Year}");
+            //player.Shuffle();
+            //player.Play();
+            //Console.ReadLine();
 
-         var testAlbum2 = AddAlbum("best", 1995);
-         Console.WriteLine($"{testAlbum2.Name}   {testAlbum2.Year}");
+            //Console.WriteLine("LazySort   Play    ");
 
-        TraceInfo(player);
-    */
+            
+            //player.Play();
 
-             player.Songs = CreateSongMassive(ref theShortestSong, ref theLongestSong);
-           player.LockButton();
-             player.Play();
-             player.VolumeUp();
-             Console.WriteLine(player.Volume);
-            player.LockButton();
-             player.VolumeChange(150);
-             Console.WriteLine(player.Volume);
-
-             player.VolumeChange(-125);
-             Console.WriteLine(player.Volume);
-
-             player.Stop();
-
-             Console.ReadLine();
-
-            // player._play = false;
+            player.Stop();
+            
+            Console.ReadLine();            
         }
 
         public static Song[] GetSongsData()
@@ -100,18 +96,15 @@ namespace MusicPlayer
             return new Song[] {song};
         }
 
-        public static void TraceInfo(Player player)
-        {
-            Console.WriteLine(player.Songs[0].Artist.Name);
-            Console.WriteLine(player.Songs[0].Duration);
-            Console.WriteLine(player.Songs.Length);
-            Console.WriteLine(player.Volume);
-        }
-
-        /// /// /// /// /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
-        /// B5-Player6/10
-        /// 
-        public static Song CreateSong()
+        //public static void TraceInfo(Player player)
+        //{
+        //    Console.WriteLine(player._songs[0].Name);
+        //    Console.WriteLine(player._songs[0].Duration);
+        //    Console.WriteLine(player._songs.Count);
+        //    Console.WriteLine(player.Volume);
+        //}
+    
+    public static Song CreateSong()
         {
             Song onesong = new Song();
             onesong.Duration= 60;
@@ -137,38 +130,32 @@ namespace MusicPlayer
             
             return onesong; 
         }
-
-        //    B5-Player7/10 OutRefParameters
-        /// /// /// /// /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
-        public static Song[] CreateSongMassive(ref int theShortestSong, ref int theLongestSong)
+               
+        public static List<Song> CreateSongMassive(ref int theShortestSong, ref int theLongestSong)
         {
-            Song[] songList= new Song[5];
+            List<Song> songList = new List<Song>();
             Random rnd = new Random();
-            for (int i = 1; i < 6; i++)
+            for (int i = 0; i < 5; i++)
             {                
-                songList[i - 1] =CreateSong("Unnamed "+i, rnd.Next(120, 300));
+                songList.Add(CreateSong("Unnamed "+(i+1), rnd.Next(10, 20)));  
 
-                theLongestSong = songList[i - 1].Duration > theLongestSong ? songList[i - 1].Duration : theLongestSong;
-                theShortestSong = songList[i - 1].Duration < theShortestSong ? songList[i - 1].Duration : theShortestSong;
+                theLongestSong = songList[i].Duration > theLongestSong ? songList[i].Duration : theLongestSong;
+                theShortestSong = songList[i].Duration < theShortestSong ? songList[i].Duration : theShortestSong;
             }
 
-            return songList ;
-                                        // return new Song[] { songList[0], songList[1], songList[2], songList[3], songList[4]};
+            return songList ;                                       
         }
-
-        //
-        public static int SummaryDuration(params Song[] workSongs) 
+                
+        public static int SummaryDuration(IEnumerable<Song> workSongs) 
         {
             int sum=0;
-            for (int i = 0; i < workSongs.Length; i++)
+            foreach (var item in workSongs)
             {
-                sum += workSongs[i].Duration;
-            }
+                sum += item.Duration;
+            }            
             return sum;
         }
-
-        //    B5-Player10/10 defaultAndNamedParametrs    /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
-        /// /// /// /// /// /// /// /// /// /// /// /// /// /// ////// /// /// /// /// /// /// /// ///
+                
         public static Artist AddArtist(string art_name = "Unknown Artist")
         {
             Artist newArtist = new Artist(art_name);

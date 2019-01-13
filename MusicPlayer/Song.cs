@@ -4,17 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace MusicPlayer
 {
     public class Song : IComparable<Song>, IEquatable<Song>
     {
+        private bool? _like;
         public int Duration;
         public string Name;
         public string Lyrics;
         public Artist Artist;
         public Album Album;
         
-
+        
         public Song()
         {
             Duration = 1;
@@ -22,10 +24,30 @@ namespace MusicPlayer
             Lyrics = "LaiLai";
             Artist = new Artist();
             Album = new Album();
+            _like = null;
+        }
+        public bool? FieldLike
+        {
+            get
+            {
+                return _like;
+            }
+
+            set
+            {
+                if (_like==null)
+                {
+                    _like = value;
+                }
+                else if (_like !=value)
+                {
+                    _like = null;
+                }
+            }
         }
         public override string ToString()
         {
-            return $"{Name} - {Lyrics} --  {Duration} sec, {Artist}  {Album} ";
+            return $"{String.Format("{0,10}", Name.CutSongName()) } - {Lyrics} --  {Duration} sec, {Artist}   {Artist.genre} {Album} ";
         }
 
         public int CompareTo(Song other)
@@ -50,7 +72,6 @@ namespace MusicPlayer
                     {
                         return 1;
                     }
-
                 }
             }           
         }
@@ -64,5 +85,15 @@ namespace MusicPlayer
             return false;
         }
 
+        public void Like()
+        {            
+            FieldLike = true;
+        }
+
+        public void Dislike()
+        {
+            FieldLike = false;
+        }
+       
     }
 }

@@ -17,6 +17,7 @@ namespace MusicPlayer
             var playlist = new Playlist();
 
             var song = CreateSong("first", 10);
+            song.Artist.genre = Artist.Genre.Rock;
             var song1 = CreateSong("Second", 15);
             var song2 = CreateSong("third", 20);
             playlist.Add(song);
@@ -25,23 +26,18 @@ namespace MusicPlayer
             playlist.Add(song);
             playlist.Add(song1);
             playlist.Add(song2);
-
-            Console.WriteLine(playlist.Count());
-            playlist.Insert(2, song2);
-           //playlist.Clear();
-            playlist.Insert(0, song2);
-            playlist.Insert(8, song2);
-
-            Console.WriteLine(Convert.ToString(playlist.Contains(song2)));
-            Console.WriteLine(playlist.IndexOf(song1));
             
+            song.Like();
+            song1.Dislike();
+            player.Add(CreateSongMassive(ref theShortestSong, ref theLongestSong));
+           
             player.Add(playlist);
+            player.Shuffle();
 
-            
 
             //Console.WriteLine("Play    Shuffle    SortByTitle");
             player.Play();
-           // player.Shuffle();               
+            // player.Shuffle();               
             //player.Play();
             //Console.ReadLine();
 
@@ -71,15 +67,15 @@ namespace MusicPlayer
         {
             var artist = new Artist();
             artist.Name = "Powerwolf";
-            artist.Genre = "Metal";
+            artist.genre = Artist.Genre.Rock;
 
             var artist2 = new Artist("Lordi");
             Console.WriteLine(artist2.Name);
-            Console.WriteLine(artist2.Genre);
+            Console.WriteLine(artist2.genre);
 
-            var artist3 = new Artist("Sabaton", "Rock");
+            var artist3 = new Artist("Sabaton", Artist.Genre.Rock);
             Console.WriteLine(artist3.Name);
-            Console.WriteLine(artist3.Genre);
+            Console.WriteLine(artist3.genre);
 
             var album = new Album();
             album.Name = "New Album";
@@ -137,7 +133,7 @@ namespace MusicPlayer
             Random rnd = new Random();
             for (int i = 0; i < 5; i++)
             {                
-                songList.Add(CreateSong("Unnamed "+(i+1), rnd.Next(10, 20)));  
+                songList.Add(CreateSong("VeryUnnamed "+(i+1), rnd.Next(10, 20)));  
 
                 theLongestSong = songList[i].Duration > theLongestSong ? songList[i].Duration : theLongestSong;
                 theShortestSong = songList[i].Duration < theShortestSong ? songList[i].Duration : theShortestSong;

@@ -106,8 +106,20 @@ namespace MusicPlayer
                 {
                     foreach (var item in _songs)
                     {
+                        switch (item.FieldLike)
+                        {
+                            case null:
+                                Console.ResetColor();
+                                break;
+                            case true:
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                break;
+                            case false:
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                break;                            
+                        }
                         Console.WriteLine($"Player is playing:   {item} ");
-                        System.Threading.Thread.Sleep(500);
+                        System.Threading.Thread.Sleep(1000);
                     }
                 }               
             }           
@@ -179,15 +191,7 @@ namespace MusicPlayer
 
         public void Shuffle()
         {
-            int index = 0;
-            var shuffledSongs = new List<Song>();
-            while (0 < _songs.Count)
-            {
-                index = rnd.Next(0, _songs.Count);
-                shuffledSongs.Add(_songs[index]);
-                _songs.RemoveAt(index);
-            }                
-           _songs.AddRange(shuffledSongs);            
+            _songs.Shuffle();      
         }
 
         public void SortByTitle()

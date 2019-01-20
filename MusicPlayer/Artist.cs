@@ -25,13 +25,13 @@ namespace MusicPlayer
         public Artist()
         {
             this.Name = "Default artist";
-            this.genre = (Genre)0b10000000;
+            this.genre = Genre.None;
         }
 
         public Artist(string name)
         {
             this.Name = name;
-            this.genre = (Genre)0b10000000;
+            this.genre = Genre.None;
         }
 
         public Artist(string name, Genre genre)

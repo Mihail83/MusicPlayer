@@ -19,6 +19,7 @@ namespace MusicPlayer
             var song = CreateSong("first", 10);
             song.Artist.genre = Artist.Genre.Rock;
             var song1 = CreateSong("Second", 15);
+            song1.Artist.genre = Artist.Genre.Rock;
             var song2 = CreateSong("third", 20);
             playlist.Add(song);
             playlist.Add(song1);
@@ -32,7 +33,9 @@ namespace MusicPlayer
             player.Add(CreateSongMassive(ref theShortestSong, ref theLongestSong));
            
             player.Add(playlist);
-            player.Shuffle();
+            player.SortByGenre();
+
+            
 
 
             //Console.WriteLine("Play    Shuffle    SortByTitle");
@@ -165,5 +168,8 @@ namespace MusicPlayer
             newAlbum.Year = year;
             return newAlbum;
         }
+
+
+      
     }
 }

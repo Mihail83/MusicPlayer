@@ -40,6 +40,7 @@ namespace MusicPlayer
 
             //Console.WriteLine("Play    Shuffle    SortByTitle");
             player.Play();
+            player.NewScreen();
             // player.Shuffle();               
             //player.Play();
             //Console.ReadLine();

@@ -47,7 +47,24 @@ namespace MusicPlayer
         }
         public override string ToString()
         {
-            return $"{String.Format("{0,10}", Name.CutSongName()) } - {Lyrics} --  {Duration} sec, {Artist}   {Artist.genre} {Album} ";
+            if (this.FieldLike != null)
+            {
+                if (this.FieldLike == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+            }
+            else
+            {
+                Console.ResetColor();
+            }
+
+
+            return $"{String.Format("{0,10}", Name.CutSongName()) } - {Lyrics} --  {Duration} sec, {Artist}   {Artist.genre} {Album} \n";
         }
 
         public int CompareTo(Song other)

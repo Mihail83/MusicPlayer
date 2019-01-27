@@ -11,7 +11,7 @@ namespace Skins
     { 
           void Clear();
           void Render(string text);
-          void Render(Song song);
+          void Render(PlayingItem song);
     }
 
     public class ClassicSkin : ISkin
@@ -25,7 +25,7 @@ namespace Skins
         {
             Console.Write(text);           
         }
-        public void Render(Song song)
+        public void Render(PlayingItem song)
         {
             Console.Write(song);
             Console.ResetColor();            
@@ -45,7 +45,7 @@ namespace Skins
             Console.ForegroundColor = (ConsoleColor)rnd.Next(0, 15);
             Console.Write(text);
         }
-        public  void Render(Song song)
+        public  void Render(PlayingItem song)
         {
             Console.Write(song);
             Console.ResetColor();            

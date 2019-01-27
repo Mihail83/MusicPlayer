@@ -7,15 +7,11 @@ using System.Threading.Tasks;
 
 namespace MusicPlayer
 {
-    public class Song : IComparable<Song>, IEquatable<Song>
-    {
-        private bool? _like;
-        public int Duration;
-        public string Name;
+    public class Song : PlayingItem, IComparable<Song>, IEquatable<Song>
+    {         
         public string Lyrics;
         public Artist Artist;
-        public Album Album;
-        
+        public Album Album;        
         
         public Song()
         {
@@ -25,46 +21,11 @@ namespace MusicPlayer
             Artist = new Artist();
             Album = new Album();
             _like = null;
-        }
-        public bool? FieldLike
-        {
-            get
-            {
-                return _like;
-            }
-
-            set
-            {
-                if (_like==null)
-                {
-                    _like = value;
-                }
-                else if (_like !=value)
-                {
-                    _like = null;
-                }
-            }
-        }
+        }        
+        
         public override string ToString()
         {
-            if (this.FieldLike != null)
-            {
-                if (this.FieldLike == true)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                }
-            }
-            else
-            {
-                Console.ResetColor();
-            }
-
-
-            return $"{String.Format("{0,10}", Name.CutSongName()) } - {Lyrics} --  {Duration} sec, {Artist}   {Artist.genre} {Album} \n";
+            return base.ToString() + $"  {Lyrics} , {Artist}   {Artist.genre} {Album} \n";
         }
 
         public int CompareTo(Song other)
@@ -100,10 +61,47 @@ namespace MusicPlayer
                 return true;
             }
             return false;
+        }       
+    }
+
+    public class Video : PlayingItem
+    {
+        public override string ToString()
+        {
+            return base.ToString()+"\n";
+        }
+
+
+    }
+
+    public abstract class PlayingItem
+    {
+        protected bool? _like;
+        public int Duration;
+        public string Name;
+
+        public bool? FieldLike
+        {
+            get
+            {
+                return _like;
+            }
+
+            set
+            {
+                if (_like == null)
+                {
+                    _like = value;
+                }
+                else if (_like != value)
+                {
+                    _like = null;
+                }
+            }
         }
 
         public void Like()
-        {            
+        {
             FieldLike = true;
         }
 
@@ -111,6 +109,25 @@ namespace MusicPlayer
         {
             FieldLike = false;
         }
-       
+        
+        public override string ToString()
+        {
+            if (this.FieldLike != null)
+            {
+                if (this.FieldLike == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+            }
+            else
+            {
+                Console.ResetColor();
+            }
+            return $"{String.Format("{0,10}", Name.CutPlayingItemName()) }  -   {Duration/60} min {Duration%60} sec ";
+        }
     }
 }

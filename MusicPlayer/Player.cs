@@ -16,7 +16,7 @@ namespace MusicPlayer
         private List<Song> _songs;
         private bool loop;
 
-        Skin skin;
+        ISkin skin;
 
         Random rnd = new Random();
 
@@ -52,7 +52,7 @@ namespace MusicPlayer
         public Player()
         {
             counter = 0;
-            skin = new ColorSkin();
+            skin = new ClassicSkin();
             _songs = new List<Song>();
         }
 

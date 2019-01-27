@@ -7,99 +7,28 @@ using Skins;
 
 namespace MusicPlayer
 {
-    public class Player
+    public class VideoPlayer : GenericPlayer<Video>
     {
-        private bool _locked;
-        private bool _play;
-        // сменить на private
-        private int counter;
-        private List<Song> _songs;
-        private bool loop;
-
-        ISkin skin;
-
-        Random rnd = new Random();
-
-        const int MIN_VOLUME = 0;
-        const int MAX_VOLUME = 100;
-
-        private int _volume;
-
-        public int Volume
+        public override void Play(bool loop = false)
         {
-            get
-            {
-                return _volume;
-            }
-
-            private set
-            {
-                if (value < MIN_VOLUME)
-                {
-                    _volume = MIN_VOLUME;
-                }
-                else if (value > MAX_VOLUME)
-                {
-                    _volume = MAX_VOLUME;
-                }
-                else
-                {
-                    _volume = value;
-                }
-            }
+            throw new NotImplementedException();
         }
+    }
+
+    public class Player : GenericPlayer<Song>
+    {        
+       // private int counter;        
+        
+        Random rnd = new Random();        
 
         public Player()
         {
-            counter = 0;
+            //counter = 0;
             skin = new ClassicSkin();
-            _songs = new List<Song>();
+            _playingItem = new List<Song>();
         }
 
-        public bool Playing
-        {
-            get
-            {
-                return _play;
-            }
-        }
-
-        public void VolumeUp()
-        {
-            if (!_locked)
-            {
-                Volume++;
-                skin.Render("sound has been increased\n");
-            }           
-        }
-
-        public void VolumeDown()
-        {
-            if (!_locked)
-            {
-                Volume--;
-                skin.Render("sound has been reduced\n");
-            }             
-        }
-
-        public void VolumeChange( int step)
-        {
-            if (!_locked)
-            {
-
-                Volume += step;
-                if (step > 0)
-                {
-                    skin.Render("sound has been increased\n");
-                }
-                else
-                {
-                    skin.Render("sound has been reduced\n");
-                }
-            }                  
-        }
-
-        public void Play(bool loop = false)
+        public override void Play(bool loop = false)
         {
             int loopNumber = loop ? 5 : 1;
             if (_locked) return;
@@ -109,20 +38,8 @@ namespace MusicPlayer
 
                 for (int i = 0; i < loopNumber; i++)
                 {
-                    foreach (var item in _songs)
-                    {
-                        //switch (item.FieldLike)                                          //извращение??
-                        //{
-                        //    case null:
-                        //        Console.ResetColor();
-                        //        break;
-                        //    case true:
-                        //        Console.ForegroundColor = ConsoleColor.Green;
-                        //        break;
-                        //    case false:
-                        //        Console.ForegroundColor = ConsoleColor.Red;
-                        //        break;                            
-                        //}
+                    foreach (var item in _playingItem)
+                    {                      
                         skin.Render($"Player is playing: ");
                         skin.Render(item);
                         
@@ -139,48 +56,7 @@ namespace MusicPlayer
                 skin.Render("Player has stopped\n");
                 _play = false;
             }            
-        }
-        
-        public void Add(Song adddendSong )
-        {
-            if (adddendSong == null)
-            {
-                skin.Render("Песен нет\n");
-            }
-            else
-            {
-                _songs.Add(adddendSong);
-            }               
-        }
-
-        public void Add(List<Song> adddendSong)
-        {
-            if (adddendSong == null)
-            {
-                skin.Render("Песен нет\n");
-            }
-            else
-            {
-                _songs.AddRange(adddendSong);                               
-            }
-        }
-       
-        public void Add(IEnumerable<Song> adddendSong)
-        {
-            if (adddendSong == null)
-            {
-                skin.Render("Песен нет\n");
-            }
-            else
-            {
-                _songs.AddRange(adddendSong);
-            }
-        }
-
-        public void Remove(int RemoveIndex)
-        {
-            _songs.RemoveAt(RemoveIndex);        
-        }
+        } 
 
         public void LockButton()
         {
@@ -194,66 +70,162 @@ namespace MusicPlayer
                 _locked = true;
                 Console.WriteLine("Плеер заблокирован\n");
             }
-        }
-
-        public void Shuffle()
-        {
-            _songs.Shuffle();      
-        }
-
-        public void SortByTitle()
-        {
-            var listForSort = new List<Song>();
-            var nameList = new List<string>();
-            foreach (var item in _songs)
-            {
-                nameList.Add(item.Name);
-            }
-            nameList.Sort();
-            for (; 0 < nameList.Count;)
-            {
-                foreach (var item in _songs)
-                {
-                    if (nameList[0].Equals(item.Name))
-                    {
-                        listForSort.Add(item);
-                        nameList.RemoveAt(0);
-                        break;
-                    }
-                }
-            }
-            _songs.Clear();
-            _songs.AddRange(listForSort);
-        }
-        public void LazyAndRightSort()  //  :-)
-        {
-            _songs.Sort();
-        }
-
-        //-BL8-Player4/4. FilterByGenre
+        }           
 
         public void FilterByGenre(Artist.Genre genre)
         {
-            for (int i = _songs.Count-1; i >= 0; i--)
+            for (int i = _playingItem.Count - 1; i >= 0; i--)
             {
-                if (_songs[i].Artist.genre != genre)
+                if (_playingItem[i].Artist.genre != genre)
                 {
-                    _songs.RemoveAt(i);
+                    _playingItem.RemoveAt(i);
                 }
-            }            
+            }
         }
 
-        public void SortByGenre()
+        public void SortByGenre()     
         {
-            List<Song> sortedSongs = new List<Song>();
-            var sortedsongsLINQ = from n in _songs orderby n.Artist.genre  select n;
-            sortedSongs.AddRange(sortedsongsLINQ);           
-            _songs = sortedSongs;                       
+            var sortedsongsLINQ = from n in _playingItem orderby n.Artist.genre select n;
+            var listForSort = new List<Song>();                              // разобраться с преобразованием типов
+            listForSort.AddRange(sortedsongsLINQ);
+            _playingItem = listForSort;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   
+    public abstract class GenericPlayer<T> where T : PlayingItem
+    {
+        protected bool _locked;
+        protected bool _play;
+        protected int _volume;
+        public List<T> _playingItem;
+
+        const int MIN_VOLUME = 0;
+        const int MAX_VOLUME = 100;      
+
+        protected ISkin skin;
+
+        public int Volume
+        {
+            get
+            {
+                return _volume;
+            }
+
+            protected set
+            {
+                if (value < MIN_VOLUME)
+                {
+                    _volume = MIN_VOLUME;
+                }
+                else if (value > MAX_VOLUME)
+                {
+                    _volume = MAX_VOLUME;
+                }
+                else
+                {
+                    _volume = value;
+                }
+            }
+        }
+
+        public bool Playing
+        {
+            get
+            {
+                return _play;
+            }
+        }
+
+        public void VolumeUp()
+        {
+            if (!_locked)
+            {
+                Volume++;
+                skin.Render("sound has been increased\n");
+            }
+        }
+
+        public void VolumeDown()
+        {
+            if (!_locked)
+            {
+                Volume--;
+                skin.Render("sound has been reduced\n");
+            }
+        }
+
+        public void VolumeChange(int step)
+        {
+            if (!_locked)
+            {
+
+                Volume += step;
+                if (step > 0)
+                {
+                    skin.Render("sound has been increased\n");
+                }
+                else
+                {
+                    skin.Render("sound has been reduced\n");
+                }
+            }
+        }
+
+        public void Add(T adddendSong)
+        {
+            if (adddendSong == null)
+            {
+                skin.Render("не то \n");
+            }
+            else
+            {
+                _playingItem.Add(adddendSong);
+            }
+        }
+        
+        public void Add(IEnumerable<T> adddendSong) 
+        {
+            if (adddendSong == null)
+            {
+                skin.Render("Песен нет\n");
+            }
+            else
+            {
+                _playingItem.AddRange(adddendSong);
+            }
+        }
+
+        public void Remove(int RemoveIndex)
+        {
+            _playingItem.RemoveAt(RemoveIndex);
+        }
+
+        public void LazyAndRightSort()
+        {
+            _playingItem.Sort();
         }
 
         public void NewScreen()
         {
             skin.Clear();
         }
+
+        public abstract void Play(bool loop = false);
+
+        public void SortByTitle()
+        {
+            var listForSort = new List<T>();
+            var linqSort = from song in _playingItem orderby song.Name select song;
+            listForSort.AddRange(linqSort);            
+            _playingItem = listForSort;            
+        }
+        public void Shuffle()
+        {
+            _playingItem.Shuffle();
+        }
+
+
     }
 }

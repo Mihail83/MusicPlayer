@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace MusicPlayer
 {
-    static public class Extension
+    public static  class Extension
     {
         
-        public static string CutSongName(this string name)
+        public static string CutPlayingItemName(this string name)
         {
             if (name.Length > 10)
             {
@@ -21,21 +22,22 @@ namespace MusicPlayer
             }
         }
 
-        public static List<Song> Shuffle(this List<Song> songs )
+        public static List<T> Shuffle<T>(this List<T> playingItem )
         {
             Random rnd = new Random();
 
             int index = 0;
-                var shuffledSongs = new List<Song>();
+               var shuffledSongs = new List<T>();
 
-            for (int i = songs.Count; i > -1; i--)
+            for (int i = playingItem.Count; i > -1; i--)
             {
                 index = rnd.Next(0, i);
-                songs.Add(songs[index]);
-                songs.RemoveAt(index);
+                playingItem.Add(playingItem[index]);
+                playingItem.RemoveAt(index);
             }
-            return songs;
+            return playingItem;
         }
-                              
+
+        
     }
 }

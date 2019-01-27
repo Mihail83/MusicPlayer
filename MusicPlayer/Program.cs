@@ -31,40 +31,18 @@ namespace MusicPlayer
             song.Like();
             song1.Dislike();
             player.Add(CreateSongMassive(ref theShortestSong, ref theLongestSong));
-           
+
             player.Add(playlist);
             player.SortByGenre();
 
+            player.Shuffle();
+            player.SortByTitle();
             
-
-
-            //Console.WriteLine("Play    Shuffle    SortByTitle");
             player.Play();
-            player.NewScreen();
-            // player.Shuffle();               
-            //player.Play();
-            //Console.ReadLine();
-
-            //Console.WriteLine("SortByTitle   Play    ");
-                       
-            //player.SortByTitle();
-            //player.Play();
-            //Console.ReadLine();
-
-            //Console.WriteLine("Shuffle   Play    ");
-
-            //player.Shuffle();
-            //player.Play();
-            //Console.ReadLine();
-
-            //Console.WriteLine("LazySort   Play    ");
-
-            
-            //player.Play();
 
             player.Stop();
             
-            Console.ReadLine();            
+            Console.ReadKey();            
         }
 
         public static Song[] GetSongsData()
@@ -146,7 +124,7 @@ namespace MusicPlayer
             return songList ;                                       
         }
                 
-        public static int SummaryDuration(IEnumerable<Song> workSongs) 
+        public static int SummaryDuration(IEnumerable<PlayingItem> workSongs) 
         {
             int sum=0;
             foreach (var item in workSongs)

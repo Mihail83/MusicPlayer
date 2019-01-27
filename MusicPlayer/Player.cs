@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Skins;
 
 namespace MusicPlayer
 {
@@ -15,12 +16,15 @@ namespace MusicPlayer
         private List<Song> _songs;
         private bool loop;
 
+        Skin skin;
+
         Random rnd = new Random();
 
         const int MIN_VOLUME = 0;
         const int MAX_VOLUME = 100;
 
         private int _volume;
+
         public int Volume
         {
             get
@@ -48,6 +52,7 @@ namespace MusicPlayer
         public Player()
         {
             counter = 0;
+            skin = new ColorSkin();
             _songs = new List<Song>();
         }
 
@@ -64,7 +69,7 @@ namespace MusicPlayer
             if (!_locked)
             {
                 Volume++;
-                Console.WriteLine("sound has been increased");
+                skin.Render("sound has been increased\n");
             }           
         }
 
@@ -73,7 +78,7 @@ namespace MusicPlayer
             if (!_locked)
             {
                 Volume--;
-                Console.WriteLine("sound has been reduced");
+                skin.Render("sound has been reduced\n");
             }             
         }
 
@@ -85,11 +90,11 @@ namespace MusicPlayer
                 Volume += step;
                 if (step > 0)
                 {
-                    Console.WriteLine("sound has been increased");
+                    skin.Render("sound has been increased\n");
                 }
                 else
                 {
-                    Console.WriteLine("sound has been reduced");
+                    skin.Render("sound has been reduced\n");
                 }
             }                  
         }
@@ -106,20 +111,22 @@ namespace MusicPlayer
                 {
                     foreach (var item in _songs)
                     {
-                        switch (item.FieldLike)
-                        {
-                            case null:
-                                Console.ResetColor();
-                                break;
-                            case true:
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                break;
-                            case false:
-                                Console.ForegroundColor = ConsoleColor.Red;
-                                break;                            
-                        }
-                        Console.WriteLine($"Player is playing:   {item} ");
-                        System.Threading.Thread.Sleep(1000);
+                        //switch (item.FieldLike)                                          //извращение??
+                        //{
+                        //    case null:
+                        //        Console.ResetColor();
+                        //        break;
+                        //    case true:
+                        //        Console.ForegroundColor = ConsoleColor.Green;
+                        //        break;
+                        //    case false:
+                        //        Console.ForegroundColor = ConsoleColor.Red;
+                        //        break;                            
+                        //}
+                        skin.Render($"Player is playing: ");
+                        skin.Render(item);
+                        
+                        System.Threading.Thread.Sleep(500);
                     }
                 }               
             }           
@@ -129,7 +136,7 @@ namespace MusicPlayer
         {
             if (!_locked)
             {
-                Console.WriteLine("Player has stopped");
+                skin.Render("Player has stopped\n");
                 _play = false;
             }            
         }
@@ -138,7 +145,7 @@ namespace MusicPlayer
         {
             if (adddendSong == null)
             {
-                Console.WriteLine("Песен нет");
+                skin.Render("Песен нет\n");
             }
             else
             {
@@ -150,7 +157,7 @@ namespace MusicPlayer
         {
             if (adddendSong == null)
             {
-                Console.WriteLine("Песен нет");
+                skin.Render("Песен нет\n");
             }
             else
             {
@@ -162,7 +169,7 @@ namespace MusicPlayer
         {
             if (adddendSong == null)
             {
-                Console.WriteLine("Песен нет");
+                skin.Render("Песен нет\n");
             }
             else
             {
@@ -180,12 +187,12 @@ namespace MusicPlayer
             if (_locked)
             {
                 _locked = false;
-                Console.WriteLine("Плеер разблокирован");
+                Console.WriteLine("Плеер разблокирован/n");
             }
             else
             {
                 _locked = true;
-                Console.WriteLine("Плеер заблокирован");
+                Console.WriteLine("Плеер заблокирован\n");
             }
         }
 
@@ -241,7 +248,12 @@ namespace MusicPlayer
             List<Song> sortedSongs = new List<Song>();
             var sortedsongsLINQ = from n in _songs orderby n.Artist.genre  select n;
             sortedSongs.AddRange(sortedsongsLINQ);           
-            _songs = sortedSongs;
+            _songs = sortedSongs;                       
+        }
+
+        public void NewScreen()
+        {
+            skin.Clear();
         }
     }
 }

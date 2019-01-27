@@ -7,54 +7,45 @@ using MusicPlayer;
 
 namespace Skins
 {
-    public abstract class Skin
-    {
-        public Skin() { }
-        
-        public abstract void Clear();
-        public abstract void Render(string text);
-        public abstract void Render(Song song);
+    public interface ISkin
+    { 
+          void Clear();
+          void Render(string text);
+          void Render(Song song);
     }
 
-    public class ClassicSkin : Skin
-    {
-        public ClassicSkin():base()
-        { }
-
-        public override void Clear()   //  NewScreen
+    public class ClassicSkin : ISkin
+    { 
+        public void Clear()   //  NewScreen
         {
             Console.Clear();            
         }
 
-        public override void Render(string text)
+        public void Render(string text)
         {
             Console.Write(text);           
         }
-        public override void Render(Song song)
+        public void Render(Song song)
         {
             Console.Write(song);
             Console.ResetColor();            
         }
     }
-    public class ColorSkin : Skin
+    public class ColorSkin : ISkin
     {
-        Random rnd = new Random();
-        
-        public ColorSkin():base()
-        {           
-        }
+        Random rnd = new Random();        
 
-        public override void Clear()   //  NewScreen
+        public  void Clear()   //  NewScreen
         {
             Console.Clear();           
         }
 
-        public override void Render(string text)
+        public  void Render(string text)
         {
             Console.ForegroundColor = (ConsoleColor)rnd.Next(0, 15);
             Console.Write(text);
         }
-        public override void Render(Song song)
+        public  void Render(Song song)
         {
             Console.Write(song);
             Console.ResetColor();            

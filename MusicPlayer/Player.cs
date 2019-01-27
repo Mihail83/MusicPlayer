@@ -222,5 +222,26 @@ namespace MusicPlayer
         {
             _songs.Sort();
         }
+
+        //-BL8-Player4/4. FilterByGenre
+
+        public void FilterByGenre(Artist.Genre genre)
+        {
+            for (int i = _songs.Count-1; i >= 0; i--)
+            {
+                if (_songs[i].Artist.genre != genre)
+                {
+                    _songs.RemoveAt(i);
+                }
+            }            
+        }
+
+        public void SortByGenre()
+        {
+            List<Song> sortedSongs = new List<Song>();
+            var sortedsongsLINQ = from n in _songs orderby n.Artist.genre  select n;
+            sortedSongs.AddRange(sortedsongsLINQ);           
+            _songs = sortedSongs;
+        }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 
 namespace MusicPlayer
@@ -11,12 +12,14 @@ namespace MusicPlayer
     {         
         public string Lyrics;
         public Artist Artist;
-        public Album Album;        
-        
-        public Song()
+        public Album Album;
+
+        public Song() : base()
+        { }
+
+        public Song(FileInfo playingItemInfo) : base(playingItemInfo)
         {
-            Duration = 1;
-            Name = "Unnamed";
+            Duration = 20;            
             Lyrics = "LaiLai";
             Artist = new Artist();
             Album = new Album();
@@ -66,6 +69,13 @@ namespace MusicPlayer
 
     public class Video : PlayingItem
     {
+
+        public Video(FileInfo playingItemInfo) : base(playingItemInfo)
+        {
+        }
+        public Video() : base()
+        { }
+
         public override string ToString()
         {
             return base.ToString()+"\n";
@@ -79,6 +89,16 @@ namespace MusicPlayer
         protected bool? _like;
         public int Duration;
         public string Name;
+        public string path;
+
+        public PlayingItem()
+        { }
+
+        public PlayingItem(FileInfo playingItemInfo)
+        {
+            path = playingItemInfo.FullName;
+            Name = playingItemInfo.Name;
+        }
 
         public bool? FieldLike
         {

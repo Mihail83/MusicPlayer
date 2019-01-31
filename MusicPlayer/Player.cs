@@ -4,16 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Skins;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace MusicPlayer
 {
     public class VideoPlayer : GenericPlayer<Video>
     {
+        public override void Load(string pathToFolder)
+        {
+            throw new NotImplementedException();
+        }
+
         public override void Play(bool loop = false)
         {
             throw new NotImplementedException();
         }
     }
+
 
     public class Player : GenericPlayer<Song>
     {        
@@ -26,6 +34,26 @@ namespace MusicPlayer
             //counter = 0;
             skin = new ClassicSkin();
             _playingItem = new List<Song>();
+        }
+
+        ///<summary>/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// AL6-Player -AudioFiles.
+        /// Имя
+        /// Дата создания
+        /// Размер 
+        /// </summary>
+        public override void Load(string pathToFolder)   
+        {
+            DirectoryInfo directoryWithWav = new DirectoryInfo(pathToFolder);
+            var wavInfo = directoryWithWav.GetFiles("*.wav");
+
+            if (wavInfo != null)
+            {
+                foreach (var info in wavInfo)
+                {
+                    _playingItem.Add(new Song(info));
+                }
+            }
         }
 
         public override void Play(bool loop = false)
@@ -49,14 +77,7 @@ namespace MusicPlayer
             }           
         }
 
-        public void Stop()
-        {
-            if (!_locked)
-            {
-                skin.Render("Player has stopped\n");
-                _play = false;
-            }            
-        } 
+       
 
         public void LockButton()
         {
@@ -92,8 +113,7 @@ namespace MusicPlayer
         }
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   
+      
     public abstract class GenericPlayer<T> where T : PlayingItem
     {
         protected bool _locked;
@@ -173,28 +193,38 @@ namespace MusicPlayer
             }
         }
 
-        public void Add(T adddendSong)
+
+
+        ///<summary>/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// AL6-Player -AudioFiles.
+        /// Имя
+        /// Дата создания
+        /// Размер 
+        /// </summary>
+        public void SaveAsPlaylist(string name)
         {
-            if (adddendSong == null)
+            var songToXml = new XmlSerializer(typeof(List<T>));
+            using (var xmlStream = new StreamWriter(@"D:\миша_документы\курсы 2018\С# basic\Wav\" + name + ".xml "))
             {
-                skin.Render("не то \n");
-            }
-            else
-            {
-                _playingItem.Add(adddendSong);
+                songToXml.Serialize(xmlStream, _playingItem);
             }
         }
-        
-        public void Add(IEnumerable<T> adddendSong) 
+
+        public void LoadPlaylist(string path)
         {
-            if (adddendSong == null)
+            var songToXml = new XmlSerializer(typeof(List<T>));
+            using (var xmlStream = new StreamReader(path))
             {
-                skin.Render("Песен нет\n");
+                _playingItem = (List<T>)songToXml.Deserialize(xmlStream);
             }
-            else
-            {
-                _playingItem.AddRange(adddendSong);
-            }
+        }
+
+        public abstract void Load(string pathToFolder);
+       
+
+        public void Clear()
+        {
+            _playingItem = new List<T>();
         }
 
         public void Remove(int RemoveIndex)
@@ -214,6 +244,15 @@ namespace MusicPlayer
 
         public abstract void Play(bool loop = false);
 
+        public void Stop()
+        {
+            if (!_locked)
+            {
+                skin.Render("Player has stopped\n");
+                _play = false;
+            }
+        }
+
         public void SortByTitle()
         {
             var listForSort = new List<T>();
@@ -224,6 +263,16 @@ namespace MusicPlayer
         public void Shuffle()
         {
             _playingItem.Shuffle();
+        }
+
+        public void Like(int number)
+        {
+            _playingItem[number].FieldLike = true;
+        }
+
+        public void Dislike(int number)
+        {
+            _playingItem[number].FieldLike = false;
         }
 
 

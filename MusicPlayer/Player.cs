@@ -77,14 +77,7 @@ namespace MusicPlayer
             }           
         }
 
-        public void Stop()
-        {
-            if (!_locked)
-            {
-                skin.Render("Player has stopped\n");
-                _play = false;
-            }            
-        } 
+       
 
         public void LockButton()
         {
@@ -250,6 +243,15 @@ namespace MusicPlayer
         }
 
         public abstract void Play(bool loop = false);
+
+        public void Stop()
+        {
+            if (!_locked)
+            {
+                skin.Render("Player has stopped\n");
+                _play = false;
+            }
+        }
 
         public void SortByTitle()
         {

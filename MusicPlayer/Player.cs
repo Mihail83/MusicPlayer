@@ -9,25 +9,29 @@ using System.Xml.Serialization;
 
 namespace MusicPlayer
 {
-    public class VideoPlayer : GenericPlayer<Video>
+    public class VideoPlayer : GenericPlayer<Video>, IDisposable
     {
         public override void Load(string pathToFolder)
         {
             throw new NotImplementedException();
         }
 
-        public override void Play(bool loop = false)
+        public override void Play()
         {
             throw new NotImplementedException();
         }
     }
 
 
-    public class Player : GenericPlayer<Song>
+    public class Player : GenericPlayer<Song>, IDisposable
     {        
        // private int counter;        
         
-        Random rnd = new Random();        
+        Random rnd = new Random();
+
+        public Song PlayingSong { get; private set; }
+
+        private bool disposed = false;
 
         public Player()
         {
@@ -56,25 +60,30 @@ namespace MusicPlayer
             }
         }
 
-        public override void Play(bool loop = false)
+        public override void Play()
         {
-            int loopNumber = loop ? 5 : 1;
-            if (_locked) return;
-            else
-            {                
+            if (!_play && _playingItem.Count > 0)
+            {
                 _play = true;
+            }
 
-                for (int i = 0; i < loopNumber; i++)
+            if (_play)
+            {
+                foreach (var song in _playingItem)
                 {
-                    foreach (var item in _playingItem)
-                    {                      
+                    PlayingSong = song;
+
+                    using (System.Media.SoundPlayer player = new System.Media.SoundPlayer())
+                    {
+                        player.SoundLocation = PlayingSong.path;                        
                         skin.Render($"Player is playing: ");
-                        skin.Render(item);
-                        
-                        System.Threading.Thread.Sleep(500);
+                        skin.Render(song);
+                        player.PlaySync();
                     }
-                }               
-            }           
+                }
+            }
+
+            _play = false;
         }
 
        
@@ -111,10 +120,42 @@ namespace MusicPlayer
             listForSort.AddRange(sortedsongsLINQ);
             _playingItem = listForSort;
         }
+
+        ~Player()
+        {
+            Dispose(false);
+        }
+
+        //public void Dispose()   
+        //{
+        //    Dispose(true);
+        //    GC.SuppressFinalize(this);
+        //}
+
+
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                
+                
+                // Free any other managed objects here.                
+            }
+            // Free any unmanaged objects here.
+
+            disposed = true;
+            base.Dispose(disposing);
+        }
+
+
     }
 
       
-    public abstract class GenericPlayer<T> where T : PlayingItem
+    public abstract class GenericPlayer<T> : IDisposable where T : PlayingItem
     {
         protected bool _locked;
         protected bool _play;
@@ -125,6 +166,8 @@ namespace MusicPlayer
         const int MAX_VOLUME = 100;      
 
         protected ISkin skin;
+
+        private bool disposed = false;
 
         public int Volume
         {
@@ -192,15 +235,7 @@ namespace MusicPlayer
                 }
             }
         }
-
-
-
-        ///<summary>/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// AL6-Player -AudioFiles.
-        /// Имя
-        /// Дата создания
-        /// Размер 
-        /// </summary>
+                             
         public void SaveAsPlaylist(string name)
         {
             var songToXml = new XmlSerializer(typeof(List<T>));
@@ -224,7 +259,7 @@ namespace MusicPlayer
 
         public void Clear()
         {
-            _playingItem = new List<T>();
+            _playingItem.Clear();
         }
 
         public void Remove(int RemoveIndex)
@@ -242,7 +277,7 @@ namespace MusicPlayer
             skin.Clear();
         }
 
-        public abstract void Play(bool loop = false);
+        public abstract void Play();
 
         public void Stop()
         {
@@ -275,6 +310,30 @@ namespace MusicPlayer
             _playingItem[number].FieldLike = false;
         }
 
+        ~ GenericPlayer()
+        {
+            Dispose(false);
+        }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                _playingItem = null;
+                skin = null;
+                // Free any other managed objects here.                
+            }
+            // Free any other unmanaged objects here.
+
+            disposed = true;
+        }
     }
 }

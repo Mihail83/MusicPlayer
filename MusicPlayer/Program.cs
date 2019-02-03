@@ -10,15 +10,14 @@ namespace MusicPlayer
     {
         static void Main(string[] args)
         {
-            var player = new Player();
-            //player.Load(@"D:\миша_документы\курсы 2018\С# basic\Wav");
-            //player.Clear();
-            player.LoadPlaylist(@"D:\миша_документы\курсы 2018\С# basic\Wav\test1.xml");
-            player.Like(1);
-            player.Dislike(0);
-            player.Play();
-            player.SaveAsPlaylist("test1");
-            player.Stop();
+            using (var player = new Player())
+            {
+                
+                player.LoadPlaylist(@"D:\миша_документы\курсы 2018\С# basic\Wav\test1.xml");                
+                player.Play();
+                //player.SaveAsPlaylist("test1");
+                player.Stop();
+            }           
             
             Console.ReadKey();            
         }      

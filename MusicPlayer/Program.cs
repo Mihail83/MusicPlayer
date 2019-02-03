@@ -13,37 +13,50 @@ namespace MusicPlayer
             using (var player = new Player())
             {
                 
-                player.LoadPlaylist(@"D:\миша_документы\курсы 2018\С# basic\Wav\test1.xml");                
+                player.Load(@"D:\миша_документы\курсы 2018\С# basic\Wav");
+
+                player.SongStartedEvent += ShowInfo;
+                player.SongsListChangedEvent += ShowInfo;
+
+                //player.Play();
+                //player.VolumeUp();
+
                 player.Play();
-                //player.SaveAsPlaylist("test1");
-                player.Stop();
+                player.LockButton();
+
+                player.Play();
+                player.LockButton();
+                                
             }           
             
             Console.ReadKey();            
-        }      
-                
-        public static int SummaryDuration(IEnumerable<PlayingItem> workSongs) 
-        {
-            int sum=0;
-            foreach (var item in workSongs)
-            {
-                sum += item.Duration;
-            }            
-            return sum;
-        }
-                
-        public static Artist AddArtist(string art_name = "Unknown Artist")
-        {
-            Artist newArtist = new Artist(art_name);
-            return newArtist;
         }
 
-        public static Album AddAlbum(string alb_name = "Unknown Album", int year = 2015)
+        private static void ShowInfo(List<Song> songs, Song playingSong, bool locked, int volume)
         {
-            Album newAlbum = new Album();
-            newAlbum.Name = alb_name;
-            newAlbum.Year = year;
-            return newAlbum;
-        }      
+            Console.Clear();// remove old data
+
+            //Render the list of songs
+            foreach (var song in songs)
+            {
+                if (playingSong == song)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    Console.WriteLine(song.Name);//Render current song in other color.
+                    Console.ResetColor();
+                }
+                else
+                {
+                    Console.WriteLine(song.Name);
+                }
+            }
+
+            //Render status bar
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine($"Volume is: {volume}. Locked: {locked}");
+            Console.ResetColor();
+        }
+
+        
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Skins;
+// using Skins;
 using System.IO;
 using System.Xml.Serialization;
 
@@ -24,10 +24,8 @@ namespace MusicPlayer
 
 
     public class Player : GenericPlayer<Song>, IDisposable
-    {        
-       // private int counter;        
+    {
         
-        Random rnd = new Random();
 
         public Song PlayingSong { get; private set; }
 
@@ -35,30 +33,29 @@ namespace MusicPlayer
 
         public Player()
         {
-            //counter = 0;
-            skin = new ClassicSkin();
+            //skin = new ClassicSkin();
             _playingItem = new List<Song>();
         }
 
-        ///<summary>/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// AL6-Player -AudioFiles.
-        /// Имя
-        /// Дата создания
-        /// Размер 
-        /// </summary>
-        public override void Load(string pathToFolder)   
-        {
-            DirectoryInfo directoryWithWav = new DirectoryInfo(pathToFolder);
-            var wavInfo = directoryWithWav.GetFiles("*.wav");
+        public event Action<List<Song>, Song, bool, int> SongsListChangedEvent;
+        public event Action<List<Song>, Song, bool, int> SongStartedEvent;
 
-            if (wavInfo != null)
+
+
+        public override void Load(string source)
+        {
+            var dirInfo = new DirectoryInfo(source);
+
+            if (dirInfo.Exists)
             {
-                foreach (var info in wavInfo)
+                var files = dirInfo.GetFiles("*.wav");
+                foreach (var file in files)
                 {
-                    _playingItem.Add(new Song(info));
+                    _playingItem.Add(new Song(file));
                 }
             }
-        }
+            SongsListChangedEvent?.Invoke(_playingItem, null, _locked, _volume);
+        }        
 
         public override void Play()
         {
@@ -72,12 +69,13 @@ namespace MusicPlayer
                 foreach (var song in _playingItem)
                 {
                     PlayingSong = song;
+                    SongStartedEvent?.Invoke(_playingItem, song, _locked, _volume);
 
                     using (System.Media.SoundPlayer player = new System.Media.SoundPlayer())
                     {
                         player.SoundLocation = PlayingSong.path;                        
-                        skin.Render($"Player is playing: ");
-                        skin.Render(song);
+                        //skin.Render($"Player is playing: ");
+                        //skin.Render(song);
                         player.PlaySync();
                     }
                 }
@@ -100,18 +98,7 @@ namespace MusicPlayer
                 _locked = true;
                 Console.WriteLine("Плеер заблокирован\n");
             }
-        }           
-
-        public void FilterByGenre(Artist.Genre genre)
-        {
-            for (int i = _playingItem.Count - 1; i >= 0; i--)
-            {
-                if (_playingItem[i].Artist.genre != genre)
-                {
-                    _playingItem.RemoveAt(i);
-                }
-            }
-        }
+        }                 
 
         public void SortByGenre()     
         {
@@ -126,14 +113,6 @@ namespace MusicPlayer
             Dispose(false);
         }
 
-        //public void Dispose()   
-        //{
-        //    Dispose(true);
-        //    GC.SuppressFinalize(this);
-        //}
-
-
-
         protected override void Dispose(bool disposing)
         {
             if (disposed)
@@ -141,8 +120,6 @@ namespace MusicPlayer
 
             if (disposing)
             {
-                
-                
                 // Free any other managed objects here.                
             }
             // Free any unmanaged objects here.
@@ -150,14 +127,11 @@ namespace MusicPlayer
             disposed = true;
             base.Dispose(disposing);
         }
-
-
     }
-
       
     public abstract class GenericPlayer<T> : IDisposable where T : PlayingItem
     {
-        protected bool _locked;
+        protected bool _locked=false;
         protected bool _play;
         protected int _volume;
         public List<T> _playingItem;
@@ -165,7 +139,7 @@ namespace MusicPlayer
         const int MIN_VOLUME = 0;
         const int MAX_VOLUME = 100;      
 
-        protected ISkin skin;
+         //protected ISkin skin;
 
         private bool disposed = false;
 
@@ -206,7 +180,7 @@ namespace MusicPlayer
             if (!_locked)
             {
                 Volume++;
-                skin.Render("sound has been increased\n");
+                // skin.Render("sound has been increased\n");
             }
         }
 
@@ -215,7 +189,7 @@ namespace MusicPlayer
             if (!_locked)
             {
                 Volume--;
-                skin.Render("sound has been reduced\n");
+               // skin.Render("sound has been reduced\n");
             }
         }
 
@@ -227,11 +201,11 @@ namespace MusicPlayer
                 Volume += step;
                 if (step > 0)
                 {
-                    skin.Render("sound has been increased\n");
+                    // skin.Render("sound has been increased\n");
                 }
                 else
                 {
-                    skin.Render("sound has been reduced\n");
+                  //   skin.Render("sound has been reduced\n");
                 }
             }
         }
@@ -270,12 +244,7 @@ namespace MusicPlayer
         public void LazyAndRightSort()
         {
             _playingItem.Sort();
-        }
-
-        public void NewScreen()
-        {
-            skin.Clear();
-        }
+        }       
 
         public abstract void Play();
 
@@ -283,18 +252,11 @@ namespace MusicPlayer
         {
             if (!_locked)
             {
-                skin.Render("Player has stopped\n");
+               // skin.Render("Player has stopped\n");
                 _play = false;
             }
         }
-
-        public void SortByTitle()
-        {
-            var listForSort = new List<T>();
-            var linqSort = from song in _playingItem orderby song.Name select song;
-            listForSort.AddRange(linqSort);            
-            _playingItem = listForSort;            
-        }
+        
         public void Shuffle()
         {
             _playingItem.Shuffle();
@@ -328,7 +290,7 @@ namespace MusicPlayer
             if (disposing)
             {
                 _playingItem = null;
-                skin = null;
+                //skin = null;
                 // Free any other managed objects here.                
             }
             // Free any other unmanaged objects here.

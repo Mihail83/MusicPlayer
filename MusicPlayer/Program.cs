@@ -12,20 +12,27 @@ namespace MusicPlayer
         {
             using (var player = new Player())
             {
-                
-                player.Load(@"D:\миша_документы\курсы 2018\С# basic\Wav");
-
                 player.SongStartedEvent += ShowInfo;
                 player.SongsListChangedEvent += ShowInfo;
+                player.VolumeChangedEvent += ShowInfo;
+                player.PlayerLocked += ShowInfo;
+                player.PlayerUnLocked += ShowInfo;
+                player.PlayerStoppedEvent += ShowInfo;
 
-                //player.Play();
-                //player.VolumeUp();
+               // player.PlayerStartedEvent+= PleerStart;  //    Запуск плеера
+
+                player.Load(@"D:\миша_документы\курсы 2018\С# basic\Wav");
+                System.Threading.Thread.Sleep(1000);                
+
+                player.Play();
+                player.VolumeChange(50);
 
                 player.Play();
                 player.LockButton();
 
                 player.Play();
                 player.LockButton();
+                player.Stop();
                                 
             }           
             
@@ -57,6 +64,14 @@ namespace MusicPlayer
             Console.ResetColor();
         }
 
-        
+        //private static void PleerStart(List<Song> songs, Song playingSong, bool locked, int volume)
+        //{
+        //    Console.WriteLine("Плеер ожидает указаний \n press any key");
+        //    Console.ReadKey();
+        //    ShowInfo(songs, playingSong, locked, volume);
+        //}
+
+
+
     }
 }

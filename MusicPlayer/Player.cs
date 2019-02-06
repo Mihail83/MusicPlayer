@@ -30,17 +30,21 @@ namespace MusicPlayer
         public Song PlayingSong { get; private set; }
 
         private bool disposed = false;
+        
 
         public Player()
-        {
-            //skin = new ClassicSkin();
-            _playingItem = new List<Song>();
+        {            
+            _playingItem = new List<Song>();           
         }
-
+        
         public event Action<List<Song>, Song, bool, int> SongsListChangedEvent;
         public event Action<List<Song>, Song, bool, int> SongStartedEvent;
+        
+        public event Action<List<Song>, Song, bool, int> PlayerStoppedEvent;
+        //public event Action<List<Song>, Song, bool, int> PlayerStartedEvent;
 
-
+        public event Action<List<Song>, Song, bool, int> PlayerUnLocked;
+        public event Action<List<Song>, Song, bool, int> PlayerLocked;
 
         public override void Load(string source)
         {
@@ -74,29 +78,35 @@ namespace MusicPlayer
                     using (System.Media.SoundPlayer player = new System.Media.SoundPlayer())
                     {
                         player.SoundLocation = PlayingSong.path;                        
-                        //skin.Render($"Player is playing: ");
-                        //skin.Render(song);
                         player.PlaySync();
                     }
+                    PlayingSong = null; //снять выделение красным
                 }
             }
 
             _play = false;
         }
 
-       
+        public override void Stop()
+        {
+            if (!_locked)
+            {
+                _play = false;
+                PlayerStoppedEvent?.Invoke(_playingItem, null, _locked, _volume);
+            }
+        }
 
         public void LockButton()
         {
             if (_locked)
             {
                 _locked = false;
-                Console.WriteLine("Плеер разблокирован/n");
+                PlayerUnLocked?.Invoke(_playingItem, PlayingSong, _locked, _volume);
             }
             else
             {
                 _locked = true;
-                Console.WriteLine("Плеер заблокирован\n");
+                PlayerLocked?.Invoke(_playingItem, PlayingSong, _locked, _volume);
             }
         }                 
 
@@ -106,6 +116,7 @@ namespace MusicPlayer
             var listForSort = new List<Song>();                              // разобраться с преобразованием типов
             listForSort.AddRange(sortedsongsLINQ);
             _playingItem = listForSort;
+            SongsListChangedEvent?.Invoke(_playingItem, PlayingSong, _locked, _volume);
         }
 
         ~Player()
@@ -137,9 +148,11 @@ namespace MusicPlayer
         public List<T> _playingItem;
 
         const int MIN_VOLUME = 0;
-        const int MAX_VOLUME = 100;      
+        const int MAX_VOLUME = 100;
 
-         //protected ISkin skin;
+        
+        public event Action<List<T>, T, bool, int> VolumeChangedEvent;
+        
 
         private bool disposed = false;
 
@@ -164,6 +177,7 @@ namespace MusicPlayer
                 {
                     _volume = value;
                 }
+                VolumeChangedEvent?.Invoke(_playingItem, null, _locked, _volume);
             }
         }
 
@@ -179,8 +193,7 @@ namespace MusicPlayer
         {
             if (!_locked)
             {
-                Volume++;
-                // skin.Render("sound has been increased\n");
+                Volume++;                
             }
         }
 
@@ -188,8 +201,7 @@ namespace MusicPlayer
         {
             if (!_locked)
             {
-                Volume--;
-               // skin.Render("sound has been reduced\n");
+                Volume--;               
             }
         }
 
@@ -197,16 +209,7 @@ namespace MusicPlayer
         {
             if (!_locked)
             {
-
-                Volume += step;
-                if (step > 0)
-                {
-                    // skin.Render("sound has been increased\n");
-                }
-                else
-                {
-                  //   skin.Render("sound has been reduced\n");
-                }
+                Volume += step;                
             }
         }
                              
@@ -228,8 +231,7 @@ namespace MusicPlayer
             }
         }
 
-        public abstract void Load(string pathToFolder);
-       
+        public abstract void Load(string pathToFolder);       
 
         public void Clear()
         {
@@ -248,12 +250,11 @@ namespace MusicPlayer
 
         public abstract void Play();
 
-        public void Stop()
+        public virtual void Stop()
         {
             if (!_locked)
-            {
-               // skin.Render("Player has stopped\n");
-                _play = false;
+            {               
+                _play = false;                
             }
         }
         
@@ -282,6 +283,7 @@ namespace MusicPlayer
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposed)
@@ -289,8 +291,7 @@ namespace MusicPlayer
 
             if (disposing)
             {
-                _playingItem = null;
-                //skin = null;
+                _playingItem = null;                
                 // Free any other managed objects here.                
             }
             // Free any other unmanaged objects here.

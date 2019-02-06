@@ -25,12 +25,9 @@ namespace MusicPlayer
 
     public class Player : GenericPlayer<Song>, IDisposable
     {
-        
-
         public Song PlayingSong { get; private set; }
 
-        private bool disposed = false;
-        
+        private bool disposed = false;        
 
         public Player()
         {            

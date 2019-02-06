@@ -28,6 +28,7 @@ namespace MusicPlayer
        // private int counter;        
         
         Random rnd = new Random();
+        System.Media.SoundPlayer player = new System.Media.SoundPlayer();
 
         public Song PlayingSong { get; private set; }
 
@@ -49,10 +50,10 @@ namespace MusicPlayer
         public override void Load(string pathToFolder)   
         {
             DirectoryInfo directoryWithWav = new DirectoryInfo(pathToFolder);
-            var wavInfo = directoryWithWav.GetFiles("*.wav");
-
-            if (wavInfo != null)
+           
+            if (directoryWithWav.Exists)
             {
+                var wavInfo = directoryWithWav.GetFiles("*.wav");
                 foreach (var info in wavInfo)
                 {
                     _playingItem.Add(new Song(info));
@@ -69,17 +70,17 @@ namespace MusicPlayer
 
             if (_play)
             {
+              
+
                 foreach (var song in _playingItem)
                 {
                     PlayingSong = song;
 
-                    using (System.Media.SoundPlayer player = new System.Media.SoundPlayer())
-                    {
-                        player.SoundLocation = PlayingSong.path;                        
-                        skin.Render($"Player is playing: ");
-                        skin.Render(song);
-                        player.PlaySync();
-                    }
+                    player.SoundLocation = PlayingSong.path;                        
+                    skin.Render($"Player is playing: ");
+                    skin.Render(song);
+                    player.PlaySync();
+                    
                 }
             }
 
@@ -145,6 +146,7 @@ namespace MusicPlayer
                 
                 // Free any other managed objects here.                
             }
+            player.Dispose();
             // Free any unmanaged objects here.
 
             disposed = true;

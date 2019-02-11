@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace MusicPlayer
 {
@@ -19,24 +20,16 @@ namespace MusicPlayer
                 player.PlayerUnLocked += ShowInfo;
                 player.PlayerStoppedEvent += ShowInfo;
 
-               // player.PlayerStartedEvent+= PleerStart;  //    Запуск плеера
-
-                player.Load(@"D:\миша_документы\курсы 2018\С# basic\Wav");
-                System.Threading.Thread.Sleep(1000);                
-
-                player.Play();
-                player.VolumeChange(50);
-
-                player.Play();
-                player.LockButton();
-
-                player.Play();
-                player.LockButton();
-                player.Stop();
-                                
-            }           
-            
-            Console.ReadKey();            
+                //player.Load(@"D:\миша_документы\курсы 2018\С# basic\Wav");
+                //System.Threading.Thread.Sleep(1000); 
+                ControlPlayer(player);
+            }
+            for (int i = 0; i < 5; i++)  //   ну Почему???
+            {
+                Thread.Sleep(500);
+                Console.Write(i+" ");
+            }
+            Console.ReadLine();
         }
 
         private static void ShowInfo(List<Song> songs, Song playingSong, bool locked, int volume)
@@ -44,7 +37,8 @@ namespace MusicPlayer
             Console.Clear();// remove old data
 
             //Render the list of songs
-            foreach (var song in songs)
+            if (songs != null)
+                foreach (var song in songs)
             {
                 if (playingSong == song)
                 {
@@ -62,14 +56,49 @@ namespace MusicPlayer
             Console.ForegroundColor = ConsoleColor.DarkGreen;
             Console.WriteLine($"Volume is: {volume}. Locked: {locked}");
             Console.ResetColor();
+            Console.WriteLine($"l  = load,  p  =  play,  s  =  stop, c  =  Clear, E  =  exit ");
         }
+        
+        public static  void ControlPlayer(Player player)
+        {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationToken token = cts.Token;
+            ShowInfo(null, null, false, 0);
 
-        //private static void PleerStart(List<Song> songs, Song playingSong, bool locked, int volume)
-        //{
-        //    Console.WriteLine("Плеер ожидает указаний \n press any key");
-        //    Console.ReadKey();
-        //    ShowInfo(songs, playingSong, locked, volume);
-        //}
+            while (true)
+            {
+                var ch = Console.ReadKey();
+                switch (ch.KeyChar)
+                {
+                    case 'l':
+                    case 'L':
+                        Console.WriteLine("\nВведите путь к каталогу");
+                        var path = Console.ReadLine();
+                        player.Load(@path);
+                        break;
+                    case 'p':
+                    case 'P':
+                        player.Play(token);
+                        break;
+                    case 's':
+                    case 'S':
+                        cts.Cancel();
+                        player.Stop();
+                        break;
+                    case 'c':
+                    case 'C':
+                        player.Clear();
+                        break;
+                    case 'e':
+                    case 'E':
+                        return;
+
+                    default:
+                        Console.WriteLine("\nНекоректная команда");
+                        break;
+                }
+            }
+        }
 
 
 

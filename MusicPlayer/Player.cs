@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 // using Skins;
 using System.IO;
@@ -16,7 +17,7 @@ namespace MusicPlayer
             throw new NotImplementedException();
         }
 
-        public override void Play()
+        public override void Play(CancellationToken token)
         {
             throw new NotImplementedException();
         }
@@ -27,11 +28,13 @@ namespace MusicPlayer
     {
         public Song PlayingSong { get; private set; }
 
-        private bool disposed = false;        
+        private bool disposed = false;
+        Object ForLock = new Object();
 
         public Player()
         {            
-            _playingItem = new List<Song>();           
+            _playingItem = new List<Song>();
+           
         }
         
         public event Action<List<Song>, Song, bool, int> SongsListChangedEvent;
@@ -52,36 +55,55 @@ namespace MusicPlayer
                 var files = dirInfo.GetFiles("*.wav");
                 foreach (var file in files)
                 {
-                    _playingItem.Add(new Song(file));
+                    lock (ForLock)
+                    {
+                        _playingItem.Add(new Song(file));
+                    }
+                   
                 }
             }
             SongsListChangedEvent?.Invoke(_playingItem, null, _locked, _volume);
-        }        
+        }
 
-        public override void Play()
+        public override void Clear()
+        {
+            lock (ForLock)
+            {
+                base.Clear();
+            }            
+            SongsListChangedEvent?.Invoke(_playingItem, null, _locked, _volume);            
+        }
+
+        public override void Play(CancellationToken token)
         {
             if (!_play && _playingItem.Count > 0)
             {
-                _play = true;
-            }
-
-            if (_play)
-            {
-                foreach (var song in _playingItem)
-                {
-                    PlayingSong = song;
-                    SongStartedEvent?.Invoke(_playingItem, song, _locked, _volume);
-
-                    using (System.Media.SoundPlayer player = new System.Media.SoundPlayer())
+                _play = true;             
+                    if (_play)
                     {
-                        player.SoundLocation = PlayingSong.path;                        
-                        player.PlaySync();
-                    }
-                    PlayingSong = null; //снять выделение красным
-                }
-            }
+                    lock (ForLock)
+                        {
+                            foreach (var song in _playingItem)
+                            {
+                            if (token.IsCancellationRequested)
+                            {
+                                Console.WriteLine("Остановлено");
+                                return;
+                            }
+                            PlayingSong = song;
+                            SongStartedEvent?.Invoke(_playingItem, song, _locked, _volume);
 
-            _play = false;
+                            using (System.Media.SoundPlayer player = new System.Media.SoundPlayer())
+                            {
+                                player.SoundLocation = PlayingSong.path;
+                                player.PlaySync();
+                            }
+                            PlayingSong = null; //снять выделение красным
+                            }
+                        }                       
+                    }
+                    _play = false;             
+            }           
         }
 
         public override void Stop()
@@ -230,9 +252,10 @@ namespace MusicPlayer
 
         public abstract void Load(string pathToFolder);       
 
-        public void Clear()
+        public  virtual void Clear()
         {
             _playingItem.Clear();
+
         }
 
         public void Remove(int RemoveIndex)
@@ -245,7 +268,7 @@ namespace MusicPlayer
             _playingItem.Sort();
         }       
 
-        public abstract void Play();
+        public abstract void Play(CancellationToken token);
 
         public virtual void Stop()
         {
@@ -288,7 +311,7 @@ namespace MusicPlayer
 
             if (disposing)
             {
-                _playingItem = null;                
+               // _playingItem = null;                
                 // Free any other managed objects here.                
             }
             // Free any other unmanaged objects here.
